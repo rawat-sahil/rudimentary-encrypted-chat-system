@@ -9,14 +9,17 @@ def runClient(serverip,serverport,caip,caport):
         while True:#run in a infinite loop and take input until user press ctrl c
             # take input
             data=input()
-            # encrypt the input then send it in the form of bytes
-            encryptedData=encrypt("encrypt using server public key",data)
-            client.sendall(encryptedData.encode())
+            if(len(data)<=245):
+                # encrypt the input then send it in the form of bytes
+                encryptedData=encrypt("encrypt using server public key",data)
+                client.sendall(encryptedData.encode())
 
-            #receive the acknowledgement from the server, decrypt it and then decode it from the byte form
-            data=client.recv(2048)
-            data=decrypt("decrypt using your own private key",data)
-            print(data.decode())
+                #receive the acknowledgement from the server, decrypt it and then decode it from the byte form
+                data=client.recv(2048)
+                data=decrypt("decrypt using your own private key",data)
+                print(data.decode())
+            else :
+                print("max input size is 245 bytes")
 
     return 0
 
