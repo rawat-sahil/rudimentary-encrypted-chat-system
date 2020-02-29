@@ -3,18 +3,19 @@ from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
 from Crypto.Signature import PKCS1_v1_5 as Signer_PKCS1_v1_5
 from datetime import  datetime
 from Crypto.Hash import SHA256
+import socket
 import json
 def signal_handler(signal,frame):
     exit(0)
 
 def getPrivateKey(id):
-    file=open(id+"/"+id+".priv","r")
+    file=open(str(id)+"/"+str(id)+".priv","r")
     text=file.readlines()
     privatkey="".join(text)
     return privatkey
 
 def getPublicKey(id):
-    file = open(id+"/"+id+".pub", "r")
+    file = open(str(id)+"/"+str(id)+".pub", "r")
     text=file.readlines()
     publicKey="".join(text)
     return publicKey
@@ -55,7 +56,15 @@ def extractPublicKeyFromCertificate(certificate):
 
 
 def getPublicKeyFromCA(caip,caport,id):
-    return "something"
+    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as client:
+        client.connect((caip,caport))
+        client.sendall(str(id).encode())
+        Jsoncertificate=client.recv(2048).decode()
+        client.close()
+        if verifyCertificate(Jsoncertificate):
+            return extractPublicKeyFromCertificate(Jsoncertificate)
+        else :
+            exit(0)
 
 def encrypt(key,plain_text):
     pubickey=RSA.importKey(key)

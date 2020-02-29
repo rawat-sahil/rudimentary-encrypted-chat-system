@@ -2,16 +2,20 @@ from helper import *
 import socket
 import signal
 HOST='127.0.0.1'
-
+signal.signal(signal.SIGINT,signal_handler)
 def acceptConnection(server,port ,caip,caport):
     connection, addr = server.accept()
     with connection:
+
+        # hardcoded value for testing
+        id = 8080 if port == 9090 else 9090
+        getPublicKeyFromCA(caip,caport,id)
+
         print("client connected. address:", addr)
         print(connection)
         i = 1
         while True:
-            # hardcoded value for testing
-            id = 8080 if port == 9090 else 9090
+
 
             # receive data from the connection first decode it from the bytes to text and then decrypt it
             encrypted_data = connection.recv(2048)
@@ -24,7 +28,7 @@ def acceptConnection(server,port ,caip,caport):
             i = i + 1
 def runServer(port,caip,caport):
 
-    signal.signal(signal.SIGINT,signal_handler)
+
 
     print("server running on port" , port)
 

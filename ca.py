@@ -18,7 +18,10 @@ def runca(port):
                 print("client connected address",addr)
 
                 # since this data for generating and sending public key , this will be in json format
-                id=connection.recv(4096)
+                id=connection.recv(4096).decode()
                 jsonCertificate=createCertificate(id)
                 connection.sendall(jsonCertificate.encode())
                 connection.close()
+
+if __name__=="__main__":
+    runca(8081)
